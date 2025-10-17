@@ -6,6 +6,8 @@ import { useState } from "react";
 import { AgentState as AgentStateSchema } from "@/mastra/agents";
 import { z } from "zod";
 import { WeatherToolResult } from "@/mastra/tools";
+import { GitHubSearchCard, GitHubRepoCard, GitHubIssuesCard, GitHubUserCard } from "@/components/github-cards";
+import type { SearchOutput, GetRepositoryOutput, ListIssuesOutput, GetUserOutput } from "@/mastra/tools/github/types-export";
 
 type AgentState = z.infer<typeof AgentStateSchema>;
 
@@ -82,6 +84,82 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
           </pre>
         </details>
       </div>
+    },
+  });
+
+  // GitHub Tools - UI Cards
+  useCopilotAction({
+    name: "githubSearchTool",
+    description: "Search GitHub for repositories, users, or code",
+    available: "frontend",
+    parameters: [
+      { name: "type", type: "string", required: true },
+      { name: "query", type: "string", required: true },
+      { name: "sort", type: "string", required: false },
+      { name: "limit", type: "number", required: false },
+    ],
+    render: ({ result, status }) => {
+      return <GitHubSearchCard
+        themeColor={themeColor}
+        result={result as SearchOutput}
+        status={status}
+      />
+    },
+  });
+
+  useCopilotAction({
+    name: "githubRepoInfoTool",
+    description: "Get detailed information about a GitHub repository",
+    available: "frontend",
+    parameters: [
+      { name: "owner", type: "string", required: true },
+      { name: "repo", type: "string", required: true },
+      { name: "include", type: "object", required: false },
+    ],
+    render: ({ result, status }) => {
+      return <GitHubRepoCard
+        themeColor={themeColor}
+        result={result as GetRepositoryOutput}
+        status={status}
+      />
+    },
+  });
+
+  useCopilotAction({
+    name: "githubListIssuesTool",
+    description: "List issues from a GitHub repository",
+    available: "frontend",
+    parameters: [
+      { name: "owner", type: "string", required: true },
+      { name: "repo", type: "string", required: true },
+      { name: "state", type: "string", required: false },
+      { name: "labels", type: "string", required: false },
+      { name: "limit", type: "number", required: false },
+      { name: "sort", type: "string", required: false },
+    ],
+    render: ({ result, status }) => {
+      return <GitHubIssuesCard
+        themeColor={themeColor}
+        result={result as ListIssuesOutput}
+        status={status}
+      />
+    },
+  });
+
+  useCopilotAction({
+    name: "githubUserInfoTool",
+    description: "Get information about a GitHub user or organization",
+    available: "frontend",
+    parameters: [
+      { name: "username", type: "string", required: true },
+      { name: "include", type: "object", required: false },
+    ],
+    render: ({ result, status }) => {
+      return <GitHubUserCard
+        themeColor={themeColor}
+        result={result as GetUserOutput}
+        status={status}
+      />
     },
   });
 
