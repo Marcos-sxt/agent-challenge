@@ -18,9 +18,16 @@ export const AgentState = z.object({
   proverbs: z.array(z.string()).default([]),
 });
 
-const ollama = createOllama({
-  baseURL: process.env.NOS_OLLAMA_API_URL || process.env.OLLAMA_API_URL,
-})
+// Perplexity configuration for testing
+const perplexity = openai({
+  apiKey: process.env.PERPLEXITY_API_KEY,
+  baseURL: "https://api.perplexity.ai",
+});
+
+// Ollama configuration (commented for testing)
+// const ollama = createOllama({
+//   baseURL: process.env.NOS_OLLAMA_API_URL || process.env.OLLAMA_API_URL,
+// })
 
 export const weatherAgent = new Agent({
   name: "Deus Ex Machina",
@@ -33,7 +40,8 @@ export const weatherAgent = new Agent({
     githubUserInfoTool,
   },
   // model: openai("gpt-4o"), // uncomment this line to use openai
-  model: ollama(process.env.NOS_MODEL_NAME_AT_ENDPOINT || process.env.MODEL_NAME_AT_ENDPOINT || "qwen3:8b"), // comment this line to use openai
+  // model: ollama(process.env.NOS_MODEL_NAME_AT_ENDPOINT || process.env.MODEL_NAME_AT_ENDPOINT || "qwen3:8b"), // comment this line to use openai
+  model: perplexity("llama-3.1-sonar-small-128k-online"), // using Perplexity for testing
   instructions: `You are Deus Ex Machina, an AI agent capable of system automation, monitoring, and GitHub integration.
   
 ⚠️ CRITICAL RESPONSE RULE - YOU MUST FOLLOW THIS:
